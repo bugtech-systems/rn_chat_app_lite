@@ -1,12 +1,17 @@
+/* eslint-disable prettier/prettier */
 import React from 'react';
 import {StyleSheet, View, ActivityIndicator} from 'react-native';
-import {AppProvider, UserProvider, RealmProvider} from '@realm/react';
+import {AppProvider, UserProvider} from '@realm/react';
 import {appId, baseUrl} from '../atlasConfig.json';
+import { realmContext } from './RealmContext';
+
+
 
 import {App} from './App';
 import {WelcomeView} from './WelcomeView';
 
 import {Item} from './ItemSchema';
+import { users } from './Models';
 
 const LoadingIndicator = () => {
   return (
@@ -16,14 +21,30 @@ const LoadingIndicator = () => {
   );
 };
 
+const ownItemsSubscriptionName = 'ownItems';
+const itemSubscriptionName = 'items';
+const { RealmProvider } = realmContext;
+
 export const AppWrapper = () => {
+  
+  const realmFileBehavior = {
+    type: 'downloadBeforeOpen',
+    timeOut: 5000,
+    timeOutBehavior: 'openLocalRealm',
+  }
+  
   return (
     <AppProvider id={appId} baseUrl={baseUrl}>
       <UserProvider fallback={WelcomeView}>
         <RealmProvider
-          schema={[Item]}
           sync={{
             flexible: true,
+            initialSubscriptions: {
+              update: (mutableSubs, realm) => 
+                mutableSubs.add(realm.objects(users), {name: ownItemsSubscriptionName})
+            },
+            newRealmFileBehavior: realmFileBehavior,
+            existingRealmFileBehavior: realmFileBehavior,
             onError: (_session, error) => {
               // Show sync errors in the console
               console.error(error);

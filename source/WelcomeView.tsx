@@ -1,14 +1,19 @@
+/* eslint-disable prettier/prettier */
 import React, {useCallback, useState} from 'react';
 import Realm from 'realm';
 import {useApp} from '@realm/react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {StyleSheet, Text, View, Alert} from 'react-native';
+import {TouchableOpacity, StyleSheet, Text, View, Alert, Image} from 'react-native';
 import {Input, Button} from '@rneui/base';
 import {colors} from './Colors';
+import { COLORS, icons } from './constants';
 
 export function WelcomeView(): React.ReactElement {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [dislayName, setDisplayName] = useState('');
+
+  const [keepAuth, setKeepAuth] = useState(false);
 
   // state values for toggable visibility of features in the UI
   const [passwordHidden, setPasswordHidden] = useState(true);
@@ -25,7 +30,14 @@ export function WelcomeView(): React.ReactElement {
   // onPressSignIn() uses the emailPassword authentication provider to log in
   const onPressSignIn = useCallback(async () => {
     try {
-      await signIn();
+      await signIn()
+        .then(res => {
+          console.log(res, "RES SIGN IN")
+          
+        })
+        .catch(err => {
+          console.log(err, "ERROR SIGN IN")
+        });
     } catch (error: any) {
       Alert.alert(`Failed to sign in: ${error?.message}`);
     }
@@ -33,8 +45,11 @@ export function WelcomeView(): React.ReactElement {
 
   // onPressSignUp() registers the user and then calls signIn to log the user in
   const onPressSignUp = useCallback(async () => {
+
     try {
       await app.emailPasswordAuth.registerUser({email, password});
+      // console.log(app.currentUser, "Current User here")
+
       await signIn();
     } catch (error: any) {
       Alert.alert(`Failed to sign up: ${error?.message}`);
@@ -44,11 +59,17 @@ export function WelcomeView(): React.ReactElement {
   return (
     <SafeAreaProvider>
       <View style={styles.viewWrapper}>
-        <Text style={styles.title}>My Sync App</Text>
-        <Text style={styles.subtitle}>
-          Please log in or register with a Device Sync user account. This is
-          separate from your Atlas Cloud login.
+      <Text style={styles.subtitle}>
+          { isInSignUpMode ? 'Register with a Device Sync user account.' : 'Please log in with a Device Sync user account.'}
         </Text>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', width: '100%'}}>
+      <View style={{ flexDirection: 'row', borderColor: COLORS.gray800, width: '100%', alignItems: 'center', justifyContent: 'space-around', borderTopWidth: .5, borderLeftWidth: .5, borderRightWidth: .5, paddingHorizontal: 10, paddingVertical: 20, borderTopLeftRadius: 12, borderTopRightRadius: 12,}}>
+        <Text style={{...styles.title, color: !isInSignUpMode ? COLORS.black : COLORS.gray700, fontWeight: 'bold', fontSize: 16}}>Sign in</Text>
+        <Text style={{...styles.title, color: isInSignUpMode ? COLORS.black : COLORS.gray700, fontWeight: 'bold', fontSize: 16}}>Sign up</Text>
+      </View>
+
+      <View style={{ width: '100%', borderColor: COLORS.gray800, borderLeftWidth: .5, borderRightWidth: .5, borderBottomWidth: .2, alignItems: 'center'}}>
+
         <Input
           placeholder="email"
           onChangeText={setEmail}
@@ -59,14 +80,25 @@ export function WelcomeView(): React.ReactElement {
           onChangeText={setPassword}
           secureTextEntry={passwordHidden}
           rightIcon={
-            <Button
-              title={passwordHidden ? 'Show' : 'Hide'}
+            <TouchableOpacity
               onPress={() => {
                 setPasswordHidden(!passwordHidden);
               }}
-            />
+            >
+              <Image
+                source={passwordHidden === true ? icons.hide : passwordHidden === false ? icons.show : null}
+                resizeMode="contain"
+                // eslint-disable-next-line react-native/no-inline-styles
+                style={{
+                  height: 25,
+                  width: 25,
+                }}
+                />
+            </TouchableOpacity>
           }
         />
+          <View style={{ marginBottom: 20, padding: 10}}>
+        
         {isInSignUpMode ? (
           <>
             <Button
@@ -94,8 +126,11 @@ export function WelcomeView(): React.ReactElement {
               titleStyle={styles.secondaryButton}
               onPress={() => setIsInSignUpMode(!isInSignUpMode)}
             />
-          </>
+          </>          
         )}
+        </View>
+      </View>
+        </View>
       </View>
     </SafeAreaProvider>
   );
@@ -106,6 +141,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 20,
   },
   title: {
     fontSize: 18,
@@ -117,8 +153,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   mainButton: {
-    width: 350,
-    backgroundColor: colors.primary,
+    width: 320,
+    backgroundColor: COLORS.primary,
   },
   secondaryButton: {
     color: colors.primary,
