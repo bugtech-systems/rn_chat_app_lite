@@ -12,6 +12,7 @@ import {WelcomeView} from './WelcomeView';
 
 import {Item} from './ItemSchema';
 import { users } from './Models';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const LoadingIndicator = () => {
   return (
@@ -51,7 +52,9 @@ export const AppWrapper = () => {
             },
           }}
           fallback={LoadingIndicator}>
+          <SafeAreaProvider>
           <App />
+          </SafeAreaProvider>
         </RealmProvider>
       </UserProvider>
     </AppProvider>

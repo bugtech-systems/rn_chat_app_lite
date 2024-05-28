@@ -24,6 +24,7 @@ import { useUser, useApp } from '@realm/react';
 import { users } from './Models';
 import { BSON } from 'realm';
 import Conversation from './screens/Conversation';
+import TestScreen from './screens/TestScreen';
 
 const { useRealm, useQuery } = realmContext;
 // If you're getting this app code by cloning the repository at
@@ -102,7 +103,9 @@ export const App = ({ navigation }) => {
             to the configured realm's hooks. */}
       <SafeAreaProvider>
         <NavigationContainer>
-          <Stack.Navigator>
+          <Stack.Navigator 
+          // initialRouteName='TestScreen'
+          >
             {/* <Stack.Screen
               name="Your To-Do List"
               component={ItemListView}
@@ -183,7 +186,11 @@ export const App = ({ navigation }) => {
                 // headerRight
               })}
             />
-              
+            <Stack.Screen 
+              name='TestScreen'
+              component={TestScreen}
+              options={{headerShown: false}}
+            />
             
           </Stack.Navigator>
         </NavigationContainer>

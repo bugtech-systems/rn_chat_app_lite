@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState, useRef } from 'react';
 
-import {View, Text, FlatList,DrawerLayoutAndroid, StyleSheet, Button, TouchableOpacity, Image, ScrollView} from 'react-native'
+import {View, Text, FlatList,DrawerLayoutAndroid, StyleSheet, Button, PermissionsAndroid, TouchableOpacity, Image, ScrollView, Alert} from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Popover, { PopoverPlacement } from 'react-native-popover-view';
 import { COLORS, icons, SIZES } from '../constants';
@@ -12,6 +12,11 @@ import { realmContext } from '../RealmContext';
 import {BSON} from 'realm';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { users } from '../Models';
+
+
+import RawBtApi, {RawBTPrintJob, RawBtProgress} from 'react-native-rawbt-api';
+
+
 
 const { useRealm, useQuery, useObject } = realmContext;
 
@@ -82,6 +87,50 @@ const ChatListScreen = ({navigation, route}) => {
     // Add more dummy data here...
   ];
   
+  const requestCameraPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+      
+        
+        {
+          title: 'Cool Photo App BLUETOOTH Permission',
+          message:
+            'Cool Photo App needs access to your BLUETOOTH ',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You can use the BT');
+      } else {
+        console.log('BT permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+  
+  
+  
+  const showError = (error:string) => {
+    Alert.alert('Print error',error,[
+        {
+            text: 'Cancel',
+            style: 'cancel',
+        },
+    ]);
+}
+  
+const printHello = async () => {
+  let job = new RawBTPrintJob();
+
+  job.println("Hello,World!");
+
+  RawBtApi.printJob(job.GSON()).catch((err) => showError(err.message));
+};
+  
   
   function renderPopOver() {
     return (
@@ -137,7 +186,7 @@ const ChatListScreen = ({navigation, route}) => {
         </View>
         
         <View style={{ height: 60, width: 60, alignItems: 'center', justifyContent: 'center', }}>
-        <TouchableOpacity onPress={() => console.log('Touch')}
+        <TouchableOpacity onPress={() => printHello()}
               style={{
                 backgroundColor: COLORS.white,
                 borderColor: COLORS.white,
@@ -162,7 +211,7 @@ const ChatListScreen = ({navigation, route}) => {
   
   
   useEffect(() => {
-
+    requestCameraPermission()
 }, [])
 
   
@@ -178,7 +227,31 @@ console.log(realmUser.customData, "MYREALM UYSER")
             }
             }
 
-
+            const printHelloWorld = async () => {
+              try {
+                // Initialize the RawBT API
+                const rawbt = await RNRawbtApi.init();
+          
+                // Check if the RawBT API is ready
+                const isReady = await rawbt.isReady();
+                if (!isReady) {
+                  console.log("Printer is not ready");
+                  return;
+                }
+          
+                // Create the print content
+                const printContent = {
+                  text: "Hello World",
+                };
+          
+                // Print the content
+                const result = await rawbt.printRawData(printContent);
+                console.log("Print result:", result);
+              } catch (error) {
+                console.error("Error printing:", error);
+              }
+            };
+          
 
     
     useEffect(() => {

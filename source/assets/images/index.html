@@ -1,0 +1,71 @@
+const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sample HTML</title>
+</head>
+<body style="padding: 30px">
+<img src="../assets/images/bwlogo.jpg" alt="Flowers in Chania" width="460%" height="345">
+<table style="width: 100%">
+<tr>
+<td style="font-size: 350%;"><b>OFFICIAL RECEIPT</b></td>
+</tr>
+<tr>
+    <td style="color: #333232; font-size: 250%">TICKET #: ${printData.variableTicket !== '' ? printData.variableTicket : 'n/a'}</td>
+</tr>
+<tr>
+    <td style="color: black; font-size: 250%"><b>${moment(moment().toDate()).format('MMMM DD, YYYY hh:mmA')}</b></td>
+</tr>
+</table>
+
+
+<table style="width: 100%">
+<tr>
+    <td style="text-align: left; font-size: 250%;">Game: <b>3DL</b></td>
+    <td style="text-align: left; font-size: 250%;">Date: <b>${moment(moment().toDate()).format('MMMM DD, YYYY')}</b></td>
+</tr>
+<tr>
+<br/>
+<br/>
+    <td style="text-align: left; font-size: 250%;">Draw: <b>2PM</b></td>
+    <td style="text-align: left; font-size: 250%;">Agent: <b>JESSICA</b></td>
+</tr>
+</table>
+
+<table style="width: 100%; border: 1px solid black">
+<br/>
+<tr style="text-align: center;">
+<td style="width: 25%; border-bottom: 1px solid black; border-right: 1px solid black; font-size: 250%;">COMBI</td>
+<td style="width: 25%; border-bottom: 1px solid black; border-right: 1px solid black; font-size: 250%;">S</td>
+<td style="width: 25%; border-bottom: 1px solid black; border-right: 1px solid black; font-size: 250%;">R</td>
+<td style="width: 25%; border-bottom: 1px solid black; font-size: 250%;">STAT</td>
+</tr>
+<tr style="text-align: center;">
+<td style="width: 25%; border-right: 1px solid black; font-size: 250%;">2-1-7</td>
+<td style="width: 25%; border-right: 1px solid black; font-size: 250%;">10</td>
+<td style="width: 25%; border-right: 1px solid black; font-size: 250%;">10</td>
+<td style="width: 25%; font-size: 250%;">OK</td>
+</tr>
+</table>
+
+<table style="width: 100%">
+<br/>
+<br/>
+<br/>
+<br/>
+
+<tr style="text-align: center;">
+    <td style="border-bottom: 1px solid black; padding-bottom: 40px; font-size: 250%">Total Amount Paid:  <b>₱20.00</b></td>
+</tr>
+</table>
+
+<table style="width: 100%">
+<br/>
+
+<tr style="text-align: center;">
+<td style="font-size: 250%;"><b>REF #: 97867861</b></td>
+</tr>
+</table>
+</body>
+</html>
+`;
